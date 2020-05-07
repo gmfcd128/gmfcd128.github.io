@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--Originally Specified-->
+    <script src='nexusUI.js'></script>
+    <script src='Tone.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/webmidi"></script>
+    <meta charset="utf-8">
+    <title>Web Based Virtual Instrument</title>
+    <!--Link to Boostrap CDN-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+        }
+
+        .hero::before {
+            background-image: url(./bg.jpg);
+            background-size: cover;
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.3;
+        }
+    </style>
+    <!--Link to custom script-->
+    <script type="module" src="script.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Web-based Subtractive MIDI Synthesizer</a>
+        <button class="btn btn-danger my-2 my-sm-0" id="reminderButton">Click To Start AudioContext</button>
+    </nav>
+    <div class="container-fluid d-flex flex-column hero">
+
+        <div class="row mt-2">
+            <!--User Interface for ADSR Envelope-->
+            <div class="col-auto">
+                <h5>Envelope</h5>
+                <div class="attackSliderContainer">
+                    <label for="attackSlider">Attack</label>
+                    <input type="range" class="custom-range" min="0" max="1" value="0.01" step="0.01" id="attackSlider">
+                </div>
+
+                <div class="decaySliderContainer">
+                    <label for="decaySlider">Decay</label>
+                    <input type="range" class="custom-range" min="0" max="1" value="0.3" step="0.01" id="decaySlider">
+                </div>
+
+                <div class="sustainSliderContainer">
+                    <label for="sustainSlider">Sustain</label>
+                    <input type="range" class="custom-range" min="0" max="1" value="1" step="0.01" id="sustainSlider">
+                </div>
+
+                <div class="releaseSliderContainer">
+                    <label for="releaseSlider">Release</label>
+                    <input type="range" class="custom-range" min="0" max="1" value="0.25" step="0.01"
+                        id="releaseSlider">
+                </div>
+            </div>
+            <!--User Interface for Filter-->
+            <div class="col-auto">
+                <h5>Filter</h5>
+                <div class="filterCutSliderContainer">
+                    <label for="filterCutSlider">Cut</label>
+                    <input type="range" class="custom-range" min="1" max="10" value="5" step="0.01"
+                        id="filterCutSlider">
+                </div>
+
+                <div class="filterResSliderContainer">
+                    <label for="filterResSlider">Res</label>
+                    <input type="range" class="custom-range" min="0" max="1" value="0.25" step="0.01"
+                        id="filterResSlider">
+                </div>
+
+                <div class="mainFilterLfoModSliderContainer">
+                    <label for="mainFilterLfoModSlider">Mod</label>
+                    <input type="range" min="0" max="1" value="0.25" step="0.01" class="custom-range"
+                        id="mainFilterLfoModSlider">
+                </div>
+
+                <div class="mainFilterLfoRateSliderContainer">
+                    <div class="row">
+                        <div class="col-auto">
+                            <label for="mainFilterLfoRateSlider">Rate</label>
+                        </div>
+                        <div class="col-auto ml-auto" id="mainFilterLfoRateDisplay">
+                        </div>
+                    </div>
+
+                    <input type="range" min="0" max="1" value="0.25" step="0.01" class="custom-range"
+                        id="mainFilterLfoRateSlider">
+
+                </div>
+
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" class="custom-control-input" id="mainFilterSyncCheckbox">
+                    <label class="custom-control-label" for="mainFilterSyncCheckbox">Sync</label>
+                </div>
+
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" class="custom-control-input" id="mainFilterRetrigCheckbox">
+                    <label class="custom-control-label" for="mainFilterRetrigCheckbox">Retrig</label>
+                </div>
+
+            </div>
+            <!--User Interface Control for Delay Effect-->
+            <div class="col-auto">
+                <h5>Delay</h5>
+                <div class="delayTimeSliderContainer">
+                    <div class="row">
+                        <div class="col-auto">
+                            <label for="delayTimeSlider">Time</label>
+                        </div>
+                        <div class="col-auto ml-auto" id="delayTimeDisplay">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="range" min="0" max="18" value="5" step="1" class="custom-range"
+                                id="delayTimeSlider">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="delayFbSliderContainer">
+                    <label for="delayFbSlider">Feedback</label>
+                    <input type="range" min="0" max="1" value="0.75" step="0.01" class="custom-range"
+                        id="delayFbSlider">
+                </div>
+
+                <div class="delayWetSliderContainer">
+                    <label for="delayWetSlider">Effect Mix</label>
+                    <input type="range" min="0" max="1" value="0.5" step="0.01" class="custom-range"
+                        id="delayWetSlider">
+                </div>
+
+            </div>
+
+            <!--Midi Input Device Selector Menu-->
+            <div class="col-auto">
+                <div class="row">
+                    <div class="col-auto">
+                        <h5>MIDI Input Selection</h5>
+                        <select class="custom-select" multiple id="midiDeviceSelector">
+
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <h5>Main Gain</h5>
+                        <input type="range" min="0" max="1" value="0.1" step="0.01" class="custom-range"
+                            id="mainGainSlider">
+                        <div class="row">
+                            <div class="col-auto">
+                                <h5>BPM</h5>
+                            </div>
+                            <div class="col-auto ml-auto" id="bpmDisplay">
+                            </div>
+                        </div>
+
+                        <input type="range" min="60" max="160" value="120" step="1" class="custom-range" id="bpmSlider">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--頁腳提示訊息-->
+        <div class="row fixed-bottom">
+            <div class="col-auto">
+                <p>*若沒有連接MIDI鍵盤，也可以按下鍵盤T來測試</p>
+                <p>*建議使用最新版的Google Chrome瀏覽器</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

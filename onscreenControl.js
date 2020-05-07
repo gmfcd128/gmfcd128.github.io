@@ -1,0 +1,20 @@
+//控制元件
+export var midiInputSelector = document.getElementById('midiDeviceSelector');
+export var ampAttackSlider = document.getElementById("attackSlider");
+export var ampDecaySlider = document.getElementById("decaySlider");
+export var ampSustainSlider = document.getElementById("sustainSlider");
+export var ampReleaseSlider = document.getElementById("releaseSlider");
+export var mainGainSlider = document.getElementById("mainGainSlider");
+export var bpmSlider = document.getElementById("bpmSlider");
+export var filterCutSlider = document.getElementById("filterCutSlider");
+export var filterResSlider = document.getElementById("filterResSlider");
+export var filterLFOModSlider = document.getElementById("mainFilterLfoModSlider");
+export var filterLFORateSlider = document.getElementById("mainFilterLfoRateSlider");
+export var filterLFOSync = document.getElementById("mainFilterSyncCheckbox");
+export var filterLFORetrig = document.getElementById("mainFilterRetrigCheckbox");
+export var bpmDisplay = document.getElementById("bpmDisplay");
+export var delayTimeDisplay = document.getElementById("delayTimeDisplay");
+export var filterLFORateDisplay = document.getElementById("mainFilterLfoRateDisplay");
+export var delayWetSlider = document.getElementById("delayWetSlider");
+export var delayFeedbackSlider = document.getElementById("delayFbSlider");
+export var delayTimeSlider = document.getElementById("delayTimeSlider");
